@@ -1,0 +1,16 @@
+{
+  "name": "scratch-battle-city-course",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Scratch 坦克大戰 Battle City 五堂課程教材（國小二年級）",
+  "scripts": {
+    "setup:font": "node scripts/download-font.js",
+    "build:lesson1:sb3": "node lesson1/src/build_sb3.js",
+    "build:lesson1:pdf": "node lesson1/src/build_pdf.js",
+    "build:lesson1": "npm run build:lesson1:sb3 && npm run build:lesson1:pdf"
+  },
+  "dependencies": {
+    "archiver": "^7.0.1",
+    "pdfkit": "^0.15.0"
+  }
+}

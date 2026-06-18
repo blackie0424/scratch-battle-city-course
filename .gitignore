@@ -1,0 +1,6 @@
+node_modules
+fonts/*.otf
+fonts/*.ttf
+lesson*/src/build_sb3/
+.DS_Store
+*.log
