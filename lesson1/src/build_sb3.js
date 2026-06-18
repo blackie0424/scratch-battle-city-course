@@ -110,48 +110,108 @@ const tankBlocks = {
     shadow: false, topLevel: false,
   },
 
-  // up arrow -> change y by 10
+  // ---- arrow keys with brick-color collision ----
+  // pattern: when key -> move N -> if <touching brick color> -> move -N (undo)
+  // brick color #b86a2a matches both original 磚牆 and any 磚牆2/3/... duplicates
+
+  // up arrow
   up1: {
     opcode: 'event_whenkeypressed', next: 'up2', parent: null, inputs: {},
     fields: { KEY_OPTION: ['up arrow', null] },
     shadow: false, topLevel: true, x: 250, y: 30,
   },
   up2: {
-    opcode: 'motion_changeyby', next: null, parent: 'up1',
+    opcode: 'motion_changeyby', next: 'up3', parent: 'up1',
     inputs: { DY: [1, [4, '10']] }, fields: {}, shadow: false, topLevel: false,
   },
-
-  // down arrow -> change y by -10
-  dn1: {
-    opcode: 'event_whenkeypressed', next: 'dn2', parent: null, inputs: {},
-    fields: { KEY_OPTION: ['down arrow', null] },
-    shadow: false, topLevel: true, x: 250, y: 130,
+  up3: {
+    opcode: 'control_if', next: null, parent: 'up2',
+    inputs: { CONDITION: [2, 'up4'], SUBSTACK: [2, 'up5'] },
+    fields: {}, shadow: false, topLevel: false,
   },
-  dn2: {
-    opcode: 'motion_changeyby', next: null, parent: 'dn1',
+  up4: {
+    opcode: 'sensing_touchingcolor', next: null, parent: 'up3',
+    inputs: { COLOR: [1, [9, '#b86a2a']] },
+    fields: {}, shadow: false, topLevel: false,
+  },
+  up5: {
+    opcode: 'motion_changeyby', next: null, parent: 'up3',
     inputs: { DY: [1, [4, '-10']] }, fields: {}, shadow: false, topLevel: false,
   },
 
-  // left arrow -> change x by -10
+  // down arrow
+  dn1: {
+    opcode: 'event_whenkeypressed', next: 'dn2', parent: null, inputs: {},
+    fields: { KEY_OPTION: ['down arrow', null] },
+    shadow: false, topLevel: true, x: 250, y: 150,
+  },
+  dn2: {
+    opcode: 'motion_changeyby', next: 'dn3', parent: 'dn1',
+    inputs: { DY: [1, [4, '-10']] }, fields: {}, shadow: false, topLevel: false,
+  },
+  dn3: {
+    opcode: 'control_if', next: null, parent: 'dn2',
+    inputs: { CONDITION: [2, 'dn4'], SUBSTACK: [2, 'dn5'] },
+    fields: {}, shadow: false, topLevel: false,
+  },
+  dn4: {
+    opcode: 'sensing_touchingcolor', next: null, parent: 'dn3',
+    inputs: { COLOR: [1, [9, '#b86a2a']] },
+    fields: {}, shadow: false, topLevel: false,
+  },
+  dn5: {
+    opcode: 'motion_changeyby', next: null, parent: 'dn3',
+    inputs: { DY: [1, [4, '10']] }, fields: {}, shadow: false, topLevel: false,
+  },
+
+  // left arrow
   lf1: {
     opcode: 'event_whenkeypressed', next: 'lf2', parent: null, inputs: {},
     fields: { KEY_OPTION: ['left arrow', null] },
-    shadow: false, topLevel: true, x: 250, y: 230,
+    shadow: false, topLevel: true, x: 250, y: 270,
   },
   lf2: {
-    opcode: 'motion_changexby', next: null, parent: 'lf1',
+    opcode: 'motion_changexby', next: 'lf3', parent: 'lf1',
     inputs: { DX: [1, [4, '-10']] }, fields: {}, shadow: false, topLevel: false,
   },
+  lf3: {
+    opcode: 'control_if', next: null, parent: 'lf2',
+    inputs: { CONDITION: [2, 'lf4'], SUBSTACK: [2, 'lf5'] },
+    fields: {}, shadow: false, topLevel: false,
+  },
+  lf4: {
+    opcode: 'sensing_touchingcolor', next: null, parent: 'lf3',
+    inputs: { COLOR: [1, [9, '#b86a2a']] },
+    fields: {}, shadow: false, topLevel: false,
+  },
+  lf5: {
+    opcode: 'motion_changexby', next: null, parent: 'lf3',
+    inputs: { DX: [1, [4, '10']] }, fields: {}, shadow: false, topLevel: false,
+  },
 
-  // right arrow -> change x by 10
+  // right arrow
   rt1: {
     opcode: 'event_whenkeypressed', next: 'rt2', parent: null, inputs: {},
     fields: { KEY_OPTION: ['right arrow', null] },
-    shadow: false, topLevel: true, x: 250, y: 330,
+    shadow: false, topLevel: true, x: 250, y: 390,
   },
   rt2: {
-    opcode: 'motion_changexby', next: null, parent: 'rt1',
+    opcode: 'motion_changexby', next: 'rt3', parent: 'rt1',
     inputs: { DX: [1, [4, '10']] }, fields: {}, shadow: false, topLevel: false,
+  },
+  rt3: {
+    opcode: 'control_if', next: null, parent: 'rt2',
+    inputs: { CONDITION: [2, 'rt4'], SUBSTACK: [2, 'rt5'] },
+    fields: {}, shadow: false, topLevel: false,
+  },
+  rt4: {
+    opcode: 'sensing_touchingcolor', next: null, parent: 'rt3',
+    inputs: { COLOR: [1, [9, '#b86a2a']] },
+    fields: {}, shadow: false, topLevel: false,
+  },
+  rt5: {
+    opcode: 'motion_changexby', next: null, parent: 'rt3',
+    inputs: { DX: [1, [4, '-10']] }, fields: {}, shadow: false, topLevel: false,
   },
 
   // win loop: when flag clicked -> forever -> if touching eagle -> say + stop
