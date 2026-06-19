@@ -11,19 +11,80 @@ fs.mkdirSync(BUILD_DIR, { recursive: true });
 
 // ---------- SVG assets ----------
 
-const battlefieldSVG = `<?xml version="1.0" encoding="UTF-8"?>
+// ---------- Backdrop generator (4 scenes, bricks baked into backdrop SVG) ----------
+function brickInlineSVG(x, y) {
+  return `<g transform="translate(${x},${y})">
+    <rect width="32" height="32" fill="#8d4a1e"/>
+    <g stroke="#3e2010" stroke-width="1" fill="#b86a2a">
+      <rect x="0" y="0" width="16" height="8"/>
+      <rect x="16" y="0" width="16" height="8"/>
+      <rect x="-8" y="8" width="16" height="8"/>
+      <rect x="8" y="8" width="16" height="8"/>
+      <rect x="24" y="8" width="16" height="8"/>
+      <rect x="0" y="16" width="16" height="8"/>
+      <rect x="16" y="16" width="16" height="8"/>
+      <rect x="-8" y="24" width="16" height="8"/>
+      <rect x="8" y="24" width="16" height="8"/>
+      <rect x="24" y="24" width="16" height="8"/>
+    </g>
+  </g>`;
+}
+const gridBg = Array.from({length: 15}, (_, i) =>
+  Array.from({length: 12}, (_, j) =>
+    `<rect x="${i*32}" y="${j*30}" width="30" height="28" />`
+  ).join('')
+).join('');
+function makeBackdropSVG(brickCells, label) {
+  const bricks = brickCells.map(({col, row}) => brickInlineSVG(col*32, row*32)).join('');
+  return `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="480" height="360" viewBox="0 0 480 360">
   <rect width="480" height="360" fill="#1a1a1a"/>
-  <g fill="#2a2a2a">
-    ${Array.from({length: 15}, (_, i) =>
-      Array.from({length: 12}, (_, j) =>
-        `<rect x="${i*32}" y="${j*30}" width="30" height="28" />`
-      ).join('')
-    ).join('')}
-  </g>
+  <g fill="#2a2a2a">${gridBg}</g>
+  ${bricks}
   <rect x="0" y="0" width="480" height="360" fill="none" stroke="#4caf50" stroke-width="4"/>
-  <text x="240" y="30" font-family="Arial" font-size="18" fill="#4caf50" text-anchor="middle">BATTLE CITY</text>
+  <text x="240" y="22" font-family="Arial" font-size="16" fill="#4caf50" text-anchor="middle">${label}</text>
 </svg>`;
+}
+function rng(start, end) {
+  return Array.from({length: end - start + 1}, (_, i) => i + start);
+}
+
+// ---------- 4 SCENE DEFINITIONS ----------
+const SCENES = [
+  {
+    name: '1-1_直線',
+    label: 'BATTLE CITY  /  1-1  STRAIGHT',
+    bricks: [
+      ...rng(1, 9).map(r => ({col: 4, row: r})),
+      ...rng(1, 9).map(r => ({col: 10, row: r})),
+    ],
+    eagle: { x: 0, y: 132 },
+  },
+  {
+    name: '1-2_轉彎',
+    label: 'BATTLE CITY  /  1-2  CORNER',
+    bricks: [
+      ...rng(0, 9).map(c => ({col: c, row: 4})),
+      ...rng(0, 9).map(c => ({col: c, row: 5})),
+    ],
+    eagle: { x: 128, y: 132 },
+  },
+  {
+    name: '1-3_迷宮',
+    label: 'BATTLE CITY  /  1-3  MAZE',
+    bricks: [
+      ...rng(0, 9).map(c => ({col: c, row: 4})),
+      ...rng(5, 14).map(c => ({col: c, row: 7})),
+    ],
+    eagle: { x: 192, y: 132 },
+  },
+  {
+    name: '1-4_沙盒',
+    label: 'BATTLE CITY  /  1-4  YOUR DESIGN',
+    bricks: [],
+    eagle: { x: 0, y: 132 },
+  },
+];
 
 const tankUpSVG = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
@@ -76,7 +137,8 @@ function writeAsset(svg) {
   return { assetId: hash, md5ext: filename, dataFormat: 'svg' };
 }
 
-const bgAsset = writeAsset(battlefieldSVG);
+// 4 backdrop costumes (one per scene)
+const sceneAssets = SCENES.map(s => writeAsset(makeBackdropSVG(s.bricks, s.label)));
 const tankAsset = writeAsset(tankUpSVG);
 const brickAsset = writeAsset(brickSVG);
 const eagleAsset = writeAsset(eagleSVG);
@@ -335,6 +397,55 @@ const tankBlocks = {
   },
 };
 
+// ---------- Tank: per-backdrop reset (tank start is same for all scenes) ----------
+SCENES.forEach((scene, i) => {
+  const k = `bd${i}`;
+  tankBlocks[`${k}_1`] = {
+    opcode: 'event_whenbackdropswitchesto', next: `${k}_2`, parent: null, inputs: {},
+    fields: { BACKDROP: [scene.name, null] },
+    shadow: false, topLevel: true, x: 500, y: 30 + i * 110,
+  };
+  tankBlocks[`${k}_2`] = {
+    opcode: 'motion_gotoxy', next: null, parent: `${k}_1`,
+    inputs: { X: [1, [4, '0']], Y: [1, [4, '-120']] },
+    fields: {}, shadow: false, topLevel: false,
+  };
+});
+
+// ---------- Eagle blocks: per-backdrop reposition ----------
+const eagleBlocks = {};
+SCENES.forEach((scene, i) => {
+  const k = `eb${i}`;
+  eagleBlocks[`${k}_1`] = {
+    opcode: 'event_whenbackdropswitchesto', next: `${k}_2`, parent: null, inputs: {},
+    fields: { BACKDROP: [scene.name, null] },
+    shadow: false, topLevel: true, x: 30, y: 30 + i * 110,
+  };
+  eagleBlocks[`${k}_2`] = {
+    opcode: 'motion_gotoxy', next: null, parent: `${k}_1`,
+    inputs: { X: [1, [4, String(scene.eagle.x)]], Y: [1, [4, String(scene.eagle.y)]] },
+    fields: {}, shadow: false, topLevel: false,
+  };
+});
+
+// ---------- Brick blocks: per-backdrop visibility (1-1~1-3 hide, 1-4 show) ----------
+// No goto inside event substacks, so kid's drag positions are preserved across scene switches
+const brickBlocks = {};
+SCENES.forEach((scene, i) => {
+  const k = `kb${i}`;
+  const isSandbox = scene.name === '1-4_\u6c99\u76d2'; // 1-4_沙盒
+  brickBlocks[`${k}_1`] = {
+    opcode: 'event_whenbackdropswitchesto', next: `${k}_2`, parent: null, inputs: {},
+    fields: { BACKDROP: [scene.name, null] },
+    shadow: false, topLevel: true, x: 30, y: 30 + i * 80,
+  };
+  brickBlocks[`${k}_2`] = {
+    opcode: isSandbox ? 'looks_show' : 'looks_hide',
+    next: null, parent: `${k}_1`, inputs: {}, fields: {},
+    shadow: false, topLevel: false,
+  };
+});
+
 // ---------- project.json ----------
 const project = {
   targets: [
@@ -343,10 +454,13 @@ const project = {
       name: 'Stage',
       variables: {}, lists: {}, broadcasts: {}, blocks: {}, comments: {},
       currentCostume: 0,
-      costumes: [{
-        assetId: bgAsset.assetId, name: '\u6230\u5834', md5ext: bgAsset.md5ext, // 戰場
-        dataFormat: 'svg', rotationCenterX: 240, rotationCenterY: 180,
-      }],
+      costumes: SCENES.map((scene, i) => ({
+        assetId: sceneAssets[i].assetId,
+        name: scene.name,
+        md5ext: sceneAssets[i].md5ext,
+        dataFormat: 'svg',
+        rotationCenterX: 240, rotationCenterY: 180,
+      })),
       sounds: [], volume: 100, layerOrder: 0,
       tempo: 60, videoTransparency: 50, videoState: 'on', textToSpeechLanguage: null,
     },
@@ -375,27 +489,27 @@ const project = {
     {
       isStage: false,
       name: '\u8001\u9df9\u57fa\u5730', // 老鷹基地
-      variables: {}, lists: {}, broadcasts: {}, blocks: {}, comments: {},
+      variables: {}, lists: {}, broadcasts: {}, blocks: eagleBlocks, comments: {},
       currentCostume: 0,
       costumes: [{
         assetId: eagleAsset.assetId, name: '\u8001\u9df9', md5ext: eagleAsset.md5ext,
         dataFormat: 'svg', rotationCenterX: 24, rotationCenterY: 24,
       }],
       sounds: [], volume: 100, layerOrder: 2,
-      visible: true, x: 0, y: 120, size: 100, direction: 90,
+      visible: true, x: SCENES[0].eagle.x, y: SCENES[0].eagle.y, size: 100, direction: 90,
       draggable: true, rotationStyle: 'don\'t rotate',
     },
     {
       isStage: false,
       name: '\u78da\u7246', // 磚牆
-      variables: {}, lists: {}, broadcasts: {}, blocks: {}, comments: {},
+      variables: {}, lists: {}, broadcasts: {}, blocks: brickBlocks, comments: {},
       currentCostume: 0,
       costumes: [{
         assetId: brickAsset.assetId, name: '\u78da\u584a', md5ext: brickAsset.md5ext,
         dataFormat: 'svg', rotationCenterX: 16, rotationCenterY: 16,
       }],
       sounds: [], volume: 100, layerOrder: 1,
-      visible: true, x: -100, y: 0, size: 100, direction: 90,
+      visible: false, x: -100, y: 0, size: 100, direction: 90,
       draggable: true, rotationStyle: 'don\'t rotate',
     },
   ],
