@@ -81,6 +81,64 @@ const tankAsset = writeAsset(tankUpSVG);
 const brickAsset = writeAsset(brickSVG);
 const eagleAsset = writeAsset(eagleSVG);
 
+// ---------- Victory sound (PCM WAV, generated procedurally) ----------
+// Ascending arpeggio C5 - E5 - G5 - C6, ~0.85s total, mono 22050 Hz 16-bit
+function makeVictoryWav() {
+  const sampleRate = 22050;
+  const notes = [
+    { freq: 523.25, dur: 0.15 }, // C5
+    { freq: 659.25, dur: 0.15 }, // E5
+    { freq: 783.99, dur: 0.15 }, // G5
+    { freq: 1046.50, dur: 0.40 }, // C6 (held)
+  ];
+  const samples = [];
+  for (const note of notes) {
+    const n = Math.floor(sampleRate * note.dur);
+    for (let i = 0; i < n; i++) {
+      const t = i / sampleRate;
+      const attack = 0.012, release = 0.06;
+      let env = 1.0;
+      if (t < attack) env = t / attack;
+      if (t > note.dur - release) env = Math.max(0, (note.dur - t) / release);
+      // Mix fundamental + soft second harmonic for a chime-like tone
+      const s = Math.sin(2 * Math.PI * note.freq * t) * 0.7
+              + Math.sin(2 * Math.PI * note.freq * 2 * t) * 0.2;
+      samples.push(Math.max(-1, Math.min(1, s * env * 0.55)));
+    }
+  }
+  const dataSize = samples.length * 2;
+  const buf = Buffer.alloc(44 + dataSize);
+  buf.write('RIFF', 0);
+  buf.writeUInt32LE(36 + dataSize, 4);
+  buf.write('WAVE', 8);
+  buf.write('fmt ', 12);
+  buf.writeUInt32LE(16, 16);
+  buf.writeUInt16LE(1, 20);  // PCM
+  buf.writeUInt16LE(1, 22);  // mono
+  buf.writeUInt32LE(sampleRate, 24);
+  buf.writeUInt32LE(sampleRate * 2, 28);
+  buf.writeUInt16LE(2, 32);
+  buf.writeUInt16LE(16, 34);
+  buf.write('data', 36);
+  buf.writeUInt32LE(dataSize, 40);
+  for (let i = 0; i < samples.length; i++) {
+    buf.writeInt16LE(Math.floor(samples[i] * 32767), 44 + i * 2);
+  }
+  return { buf, sampleRate, sampleCount: samples.length };
+}
+
+const victory = makeVictoryWav();
+const victoryHash = md5(victory.buf);
+const victoryFilename = `${victoryHash}.wav`;
+fs.writeFileSync(path.join(BUILD_DIR, victoryFilename), victory.buf);
+const victoryAsset = {
+  assetId: victoryHash,
+  md5ext: victoryFilename,
+  dataFormat: 'wav',
+  sampleRate: victory.sampleRate,
+  sampleCount: victory.sampleCount,
+};
+
 // ---------- Tank blocks: init + 4 arrow keys + win detection ----------
 
 const tankBlocks = {
@@ -229,7 +287,7 @@ const tankBlocks = {
   w3: {
     opcode: 'control_if',
     next: null, parent: 'w2',
-    inputs: { CONDITION: [2, 'w4'], SUBSTACK: [2, 'w6'] },
+    inputs: { CONDITION: [2, 'w4'], SUBSTACK: [2, 'ws'] }, // substack now starts with sound
     fields: {}, shadow: false, topLevel: false,
   },
   w4: {
@@ -245,9 +303,23 @@ const tankBlocks = {
     fields: { TOUCHINGOBJECTMENU: ['\u8001\u9df9\u57fa\u5730', null] }, // 老鷹基地
     shadow: true, topLevel: false,
   },
+  // 🆕 victory sound: play until done
+  ws: {
+    opcode: 'sound_playuntildone',
+    next: 'w6', parent: 'w3',
+    inputs: { SOUND_MENU: [1, 'wsm'] },
+    fields: {}, shadow: false, topLevel: false,
+  },
+  wsm: {
+    opcode: 'sound_sounds_menu',
+    next: null, parent: 'ws',
+    inputs: {},
+    fields: { SOUND_MENU: ['\u52dd\u5229', null] }, // 勝利
+    shadow: true, topLevel: false,
+  },
   w6: {
     opcode: 'looks_sayforsecs',
-    next: 'w7', parent: 'w3',
+    next: 'w7', parent: 'ws',
     inputs: {
       MESSAGE: [1, [10, '\u6211\u8d0f\u4e86\uff01']], // 我贏了！
       SECS: [1, [4, '2']],
@@ -287,7 +359,16 @@ const project = {
         assetId: tankAsset.assetId, name: '\u5766\u514b-\u4e0a', md5ext: tankAsset.md5ext,
         dataFormat: 'svg', rotationCenterX: 20, rotationCenterY: 20,
       }],
-      sounds: [], volume: 100, layerOrder: 3,
+      sounds: [{
+        name: '\u52dd\u5229', // 勝利
+        assetId: victoryAsset.assetId,
+        dataFormat: 'wav',
+        format: '',
+        rate: victoryAsset.sampleRate,
+        sampleCount: victoryAsset.sampleCount,
+        md5ext: victoryAsset.md5ext,
+      }],
+      volume: 100, layerOrder: 3,
       visible: true, x: 0, y: -120, size: 100, direction: 90,
       draggable: false, rotationStyle: 'don\'t rotate',
     },
