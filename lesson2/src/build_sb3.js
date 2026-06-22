@@ -55,12 +55,14 @@ const SCENES = [
   {
     name: '2-1_南口',
     label: 'BATTLE CITY  /  2-1  EXIT SOUTH',
+    // Pocket walls pushed out 1 cell so tank tracks don't hit both
+    // sides simultaneously when entering from below. South exit is now
+    // 3 cells wide (col 6-8 row 2 open); eagle still encased on top
+    // and far sides by row 0 (cols 5-9) + row 1 cols 5, 9.
     bricks: [
-      // pocket around eagle (col 7 row 1), exit at row 2 col 7 (south)
-      { col: 6, row: 0 }, { col: 7, row: 0 }, { col: 8, row: 0 },
-      { col: 6, row: 1 }, { col: 8, row: 1 },
-      { col: 6, row: 2 }, { col: 8, row: 2 },
-      // detour wall lower half
+      ...rng(5, 9).map(c => ({ col: c, row: 0 })),
+      { col: 5, row: 1 }, { col: 9, row: 1 },
+      { col: 5, row: 2 }, { col: 9, row: 2 },
       ...rng(3, 11).map(c => ({ col: c, row: 5 })),
     ],
     eagle: { x: 0, y: 132 },

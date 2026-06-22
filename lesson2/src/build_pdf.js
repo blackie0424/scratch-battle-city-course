@@ -150,9 +150,9 @@ const rng = (a, b) => Array.from({length: b - a + 1}, (_, i) => i + a);
 const SCENE_LAYOUTS = {
   '2-1': {
     bricks: [
-      [6, 0], [7, 0], [8, 0],
-      [6, 1], [8, 1],
-      [6, 2], [8, 2],
+      ...rng(5, 9).map(c => [c, 0]),
+      [5, 1], [9, 1],
+      [5, 2], [9, 2],
       ...rng(3, 11).map(c => [c, 5]),
     ],
     tank: { col: 7, row: 8 },
