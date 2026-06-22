@@ -7,10 +7,14 @@
     "setup:font": "node scripts/download-font.js",
     "build:lesson1:sb3": "node lesson1/src/build_sb3.js",
     "build:lesson1:pdf": "node lesson1/src/build_pdf.js",
-    "build:lesson1": "npm run build:lesson1:sb3 && npm run build:lesson1:pdf"
+    "build:lesson1:validate": "node lesson1/src/validate.js",
+    "build:lesson1": "npm run build:lesson1:sb3 && npm run build:lesson1:validate && npm run build:lesson1:pdf"
   },
   "dependencies": {
     "archiver": "^7.0.1",
     "pdfkit": "^0.15.0"
+  },
+  "devDependencies": {
+    "scratch-parser": "^6.0.0"
   }
 }

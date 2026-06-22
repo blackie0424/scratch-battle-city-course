@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
-const { ZipArchive } = require('archiver');
+const archiver = require('archiver');
 
 const OUT_DIR = path.join(__dirname, '..');
 const BUILD_DIR = path.join(__dirname, 'build_sb3');
@@ -457,6 +457,7 @@ const project = {
       costumes: SCENES.map((scene, i) => ({
         assetId: sceneAssets[i].assetId,
         name: scene.name,
+        bitmapResolution: 1,
         md5ext: sceneAssets[i].md5ext,
         dataFormat: 'svg',
         rotationCenterX: 240, rotationCenterY: 180,
@@ -470,7 +471,9 @@ const project = {
       variables: {}, lists: {}, broadcasts: {}, blocks: tankBlocks, comments: {},
       currentCostume: 0,
       costumes: [{
-        assetId: tankAsset.assetId, name: '\u5766\u514b-\u4e0a', md5ext: tankAsset.md5ext,
+        assetId: tankAsset.assetId, name: '\u5766\u514b-\u4e0a',
+        bitmapResolution: 1,
+        md5ext: tankAsset.md5ext,
         dataFormat: 'svg', rotationCenterX: 20, rotationCenterY: 20,
       }],
       sounds: [{
@@ -492,7 +495,9 @@ const project = {
       variables: {}, lists: {}, broadcasts: {}, blocks: eagleBlocks, comments: {},
       currentCostume: 0,
       costumes: [{
-        assetId: eagleAsset.assetId, name: '\u8001\u9df9', md5ext: eagleAsset.md5ext,
+        assetId: eagleAsset.assetId, name: '\u8001\u9df9',
+        bitmapResolution: 1,
+        md5ext: eagleAsset.md5ext,
         dataFormat: 'svg', rotationCenterX: 24, rotationCenterY: 24,
       }],
       sounds: [], volume: 100, layerOrder: 2,
@@ -505,7 +510,9 @@ const project = {
       variables: {}, lists: {}, broadcasts: {}, blocks: brickBlocks, comments: {},
       currentCostume: 0,
       costumes: [{
-        assetId: brickAsset.assetId, name: '\u78da\u584a', md5ext: brickAsset.md5ext,
+        assetId: brickAsset.assetId, name: '\u78da\u584a',
+        bitmapResolution: 1,
+        md5ext: brickAsset.md5ext,
         dataFormat: 'svg', rotationCenterX: 16, rotationCenterY: 16,
       }],
       sounds: [], volume: 100, layerOrder: 1,
@@ -522,7 +529,7 @@ fs.writeFileSync(path.join(BUILD_DIR, 'project.json'), JSON.stringify(project, n
 // ---------- zip ----------
 const sb3Path = path.join(OUT_DIR, 'Lesson1_BattleCity.sb3');
 const output = fs.createWriteStream(sb3Path);
-const archive = new ZipArchive({ zlib: { level: 9 } });
+const archive = archiver('zip', { zlib: { level: 9 } });
 output.on('close', () => console.log(`built ${sb3Path} (${archive.pointer()} bytes)`));
 archive.on('error', err => { throw err; });
 archive.pipe(output);
