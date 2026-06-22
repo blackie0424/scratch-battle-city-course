@@ -3,15 +3,46 @@
 Hacci × Wu 為朋友小孩設計的 Scratch 入門課程。透過重做經典 GameBoy 遊戲 **Battle City（坦克大戰）**，
 讓國小二年級小朋友在 5 堂課內學會 Scratch 基本操作。
 
+---
+
+## 📥 一鍵入口（永遠是最新版 main）
+
+| | 連結 | 用途 |
+|---|---|---|
+| ▶️ | [線上玩 Lesson 1（TurboWarp）](https://turbowarp.org/?project_url=https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_BattleCity.sb3) | 不用下載，按一下就在瀏覽器玩 |
+| 📄 | [Lesson 1 PDF 教學（Google Docs Viewer）](https://docs.google.com/viewer?url=https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8.pdf) | 線上瀏覽，不用下載 |
+| 📦 | [Lesson 1 .sb3 直接下載](https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_BattleCity.sb3) | 想丟進 scratch.mit.edu 編輯器才用 |
+| 📑 | [Lesson 1 PDF 直接下載](https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8.pdf) | 想印給小朋友才用 |
+
+> ⚠️ 上面 4 個連結需要 repo 是 **public**（私有的 repo TurboWarp / Google Viewer 都無法存取）。
+
+---
+
 ## 課程目標
 
 | 堂數 | 主題 | 學會的能力 |
 |---|---|---|
-| 1 | 開坦克，吃老鷹！ | 認識介面、複製角色、方向鍵控制、碰撞偵測 |
-| 2 | 四方向造型 + 撞牆停下 | 造型切換、條件判斷、邊界處理 |
+| 1 | 4 關闖關 + 自己設計 | 介面熟悉、背景切換、複製角色、方向鍵 + 碰撞偵測、音效 |
+| 2 | 四方向造型 + 邊界處理 | 造型切換、條件判斷 |
 | 3 | 發射子彈 | 分身 (clone)、廣播 (broadcast)、迴圈 |
 | 4 | 敵人 + 計分 | 變數、敵人 AI、生命值 |
-| 5 | 音效 + 勝利畫面 | 音效播放、背景切換、遊戲結束流程 |
+| 5 | 勝利畫面 + 進階音效 | 多 backdrop 流程、音效編輯 |
+
+## 第 1 堂課內容
+
+半成品 `.sb3` 已內建：
+
+- **4 個關卡 backdrop**：
+  - `1-1_直線`  ← 只用 ↑ 鍵
+  - `1-2_轉彎`  ← ↑ + →
+  - `1-3_迷宮`  ← 4 方向都用得到
+  - `1-4_沙盒`  ← 空白舞台，自己擺磚塊
+- **玩家坦克**：4 方向鍵控制 + 碰到橘色磚塊會被擋住
+- **老鷹基地**：碰到就播勝利音效 + 說「我贏了！」+ 停止
+- **磚牆 sprite**：1-1~1-3 隱藏（磚塊烤進背景），1-4 才顯示給小朋友複製
+- **勝利音效**：C-E-G-C 上升音階，約 0.85 秒
+
+PDF 教學 9 頁，含 4 關 mini-map、Backdrops 面板教學、3 個沙盒範例。
 
 ## 倉庫結構
 
@@ -31,7 +62,15 @@ Hacci × Wu 為朋友小孩設計的 Scratch 入門課程。透過重做經典 G
 
 ## 給家長／老師：怎麼開始用
 
-1. 把 `lesson1/Lesson1_新手教學.pdf` 列印或開在平板上給小朋友看
+最快路徑（不用下載任何東西）：
+
+1. 按上面 **▶️ 線上玩 Lesson 1（TurboWarp）** 直接在瀏覽器試玩
+2. 開上面 **📄 Lesson 1 PDF** 看教學，跟著步驟操作
+3. 想存自己改的版本：TurboWarp 左上角 File → Save to your computer
+
+傳統路徑：
+
+1. 下載 `lesson1/Lesson1_新手教學.pdf` 列印或開在平板上
 2. 用瀏覽器打開 https://scratch.mit.edu → Create → File → Load from your computer
 3. 選 `lesson1/Lesson1_BattleCity.sb3`
 4. 按綠旗，跟著 PDF 一步一步操作
@@ -54,16 +93,6 @@ npm run build:lesson1   # 重新產出 .sb3 與 PDF
 - **明確引導**：步驟分小塊、每步一個動作、用顏色框出注意事項
 - **可玩優先**：第 1 堂結束就能玩、有勝利條件，建立成就感
 - 每堂課提供 1 ~ 3 個成品範例供模仿
-
-## 第 1 堂課內容
-
-- 半成品 `.sb3` 已內建：
-  - 戰場背景 480×360
-  - 玩家坦克（綠色，已綁好方向鍵控制）
-  - 老鷹基地（金色，當作目標）
-  - 1 塊磚牆（讓小朋友複製）
-  - 勝利偵測（碰到老鷹 → 說「我贏了！」→ 停止）
-- PDF 教學 7 頁，含 3 個範例關卡布局供小朋友模仿
 
 ## 授權
 
