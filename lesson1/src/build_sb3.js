@@ -209,7 +209,7 @@ const tankBlocks = {
   init1: {
     opcode: 'event_whenflagclicked',
     next: 'init2', parent: null, inputs: {}, fields: {},
-    shadow: false, topLevel: true, x: 30, y: 30,
+    shadow: false, topLevel: true, x: 40, y: 20,
   },
   init2: {
     opcode: 'motion_gotoxy',
@@ -239,7 +239,7 @@ const tankBlocks = {
   up1: {
     opcode: 'event_whenkeypressed', next: 'up2', parent: null, inputs: {},
     fields: { KEY_OPTION: ['up arrow', null] },
-    shadow: false, topLevel: true, x: 250, y: 30,
+    shadow: false, topLevel: true, x: 420, y: 20,
   },
   up2: {
     opcode: 'motion_changeyby', next: 'up3', parent: 'up1',
@@ -264,7 +264,7 @@ const tankBlocks = {
   dn1: {
     opcode: 'event_whenkeypressed', next: 'dn2', parent: null, inputs: {},
     fields: { KEY_OPTION: ['down arrow', null] },
-    shadow: false, topLevel: true, x: 250, y: 150,
+    shadow: false, topLevel: true, x: 420, y: 240,
   },
   dn2: {
     opcode: 'motion_changeyby', next: 'dn3', parent: 'dn1',
@@ -289,7 +289,7 @@ const tankBlocks = {
   lf1: {
     opcode: 'event_whenkeypressed', next: 'lf2', parent: null, inputs: {},
     fields: { KEY_OPTION: ['left arrow', null] },
-    shadow: false, topLevel: true, x: 250, y: 270,
+    shadow: false, topLevel: true, x: 420, y: 460,
   },
   lf2: {
     opcode: 'motion_changexby', next: 'lf3', parent: 'lf1',
@@ -314,7 +314,7 @@ const tankBlocks = {
   rt1: {
     opcode: 'event_whenkeypressed', next: 'rt2', parent: null, inputs: {},
     fields: { KEY_OPTION: ['right arrow', null] },
-    shadow: false, topLevel: true, x: 250, y: 390,
+    shadow: false, topLevel: true, x: 420, y: 680,
   },
   rt2: {
     opcode: 'motion_changexby', next: 'rt3', parent: 'rt1',
@@ -339,7 +339,7 @@ const tankBlocks = {
   w1: {
     opcode: 'event_whenflagclicked',
     next: 'w2', parent: null, inputs: {}, fields: {},
-    shadow: false, topLevel: true, x: 30, y: 250,
+    shadow: false, topLevel: true, x: 40, y: 280,
   },
   w2: {
     opcode: 'control_forever',
@@ -404,7 +404,7 @@ SCENES.forEach((scene, i) => {
   tankBlocks[`${k}_1`] = {
     opcode: 'event_whenbackdropswitchesto', next: `${k}_2`, parent: null, inputs: {},
     fields: { BACKDROP: [scene.name, null] },
-    shadow: false, topLevel: true, x: 500, y: 30 + i * 110,
+    shadow: false, topLevel: true, x: 820, y: 20 + i * 160,
   };
   tankBlocks[`${k}_2`] = {
     opcode: 'motion_gotoxy', next: null, parent: `${k}_1`,
@@ -420,7 +420,7 @@ SCENES.forEach((scene, i) => {
   eagleBlocks[`${k}_1`] = {
     opcode: 'event_whenbackdropswitchesto', next: `${k}_2`, parent: null, inputs: {},
     fields: { BACKDROP: [scene.name, null] },
-    shadow: false, topLevel: true, x: 30, y: 30 + i * 110,
+    shadow: false, topLevel: true, x: 40, y: 20 + i * 160,
   };
   eagleBlocks[`${k}_2`] = {
     opcode: 'motion_gotoxy', next: null, parent: `${k}_1`,
@@ -440,7 +440,7 @@ SCENES.forEach((scene, i) => {
   brickBlocks[`${k}_1`] = {
     opcode: 'event_whenbackdropswitchesto', next: `${k}_2`, parent: null, inputs: {},
     fields: { BACKDROP: [scene.name, null] },
-    shadow: false, topLevel: true, x: 30, y: 30 + i * 120,
+    shadow: false, topLevel: true, x: 40, y: 20 + i * 180,
   };
   if (isSandbox) {
     brickBlocks[`${k}_2`] = {
@@ -470,7 +470,7 @@ SCENES.forEach((scene, i) => {
 brickBlocks.gf_1 = {
   opcode: 'event_whenflagclicked',
   next: 'gf_2', parent: null, inputs: {}, fields: {},
-  shadow: false, topLevel: true, x: 500, y: 30,
+  shadow: false, topLevel: true, x: 480, y: 20,
 };
 brickBlocks.gf_2 = {
   opcode: 'control_if_else',
