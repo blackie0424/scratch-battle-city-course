@@ -55,12 +55,14 @@ const SCENES = [
   {
     name: '2-1_南口',
     label: 'BATTLE CITY  /  2-1  EXIT SOUTH',
-    // Pocket walls pushed out 1 cell so tank tracks don't hit both
-    // sides simultaneously when entering from below. South exit is now
-    // 3 cells wide (col 6-8 row 2 open); eagle still encased on top
-    // and far sides by row 0 (cols 5-9) + row 1 cols 5, 9.
+    // South exit pocket. Side walls at col 5 / col 9 (far from eagle so
+    // tank tracks don't graze them). row 0 col 7 is intentionally OPEN
+    // — at sprite.y=130 the tank's gun barrel tip lands on y=148, which
+    // is exactly the bottom edge of row 0; if col 7 had a brick there
+    // the gun tip would touch the brick highlight stripe and undo the
+    // move before the win loop could detect the eagle.
     bricks: [
-      ...rng(5, 9).map(c => ({ col: c, row: 0 })),
+      { col: 5, row: 0 }, { col: 6, row: 0 }, { col: 8, row: 0 }, { col: 9, row: 0 },
       { col: 5, row: 1 }, { col: 9, row: 1 },
       { col: 5, row: 2 }, { col: 9, row: 2 },
       ...rng(3, 11).map(c => ({ col: c, row: 5 })),
