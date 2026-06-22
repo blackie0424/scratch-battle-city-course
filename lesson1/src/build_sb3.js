@@ -54,9 +54,10 @@ const SCENES = [
   {
     name: '1-1_直線',
     label: 'BATTLE CITY  /  1-1  STRAIGHT',
+    // walls run full height (rows 0-11) so kid can't slip past top/bottom
     bricks: [
-      ...rng(1, 9).map(r => ({col: 4, row: r})),
-      ...rng(1, 9).map(r => ({col: 10, row: r})),
+      ...rng(0, 11).map(r => ({col: 4, row: r})),
+      ...rng(0, 11).map(r => ({col: 10, row: r})),
     ],
     eagle: { x: 0, y: 132 },
   },
@@ -428,8 +429,10 @@ SCENES.forEach((scene, i) => {
   };
 });
 
-// ---------- Brick blocks: per-backdrop visibility (1-1~1-3 hide, 1-4 show) ----------
-// No goto inside event substacks, so kid's drag positions are preserved across scene switches
+// ---------- Brick blocks: per-backdrop visibility ----------
+// 1-1~1-3 hide; 1-4 show + go to front layer (so duplicates don't get stuck
+// under tank/eagle).  No goto in event substacks → kid's drag positions
+// persist across scene switches.
 const brickBlocks = {};
 SCENES.forEach((scene, i) => {
   const k = `kb${i}`;
@@ -437,14 +440,79 @@ SCENES.forEach((scene, i) => {
   brickBlocks[`${k}_1`] = {
     opcode: 'event_whenbackdropswitchesto', next: `${k}_2`, parent: null, inputs: {},
     fields: { BACKDROP: [scene.name, null] },
-    shadow: false, topLevel: true, x: 30, y: 30 + i * 80,
+    shadow: false, topLevel: true, x: 30, y: 30 + i * 120,
   };
-  brickBlocks[`${k}_2`] = {
-    opcode: isSandbox ? 'looks_show' : 'looks_hide',
-    next: null, parent: `${k}_1`, inputs: {}, fields: {},
-    shadow: false, topLevel: false,
-  };
+  if (isSandbox) {
+    brickBlocks[`${k}_2`] = {
+      opcode: 'looks_show',
+      next: `${k}_3`, parent: `${k}_1`, inputs: {}, fields: {},
+      shadow: false, topLevel: false,
+    };
+    brickBlocks[`${k}_3`] = {
+      opcode: 'looks_gotofrontback',
+      next: null, parent: `${k}_2`, inputs: {},
+      fields: { FRONT_BACK: ['front', null] },
+      shadow: false, topLevel: false,
+    };
+  } else {
+    brickBlocks[`${k}_2`] = {
+      opcode: 'looks_hide',
+      next: null, parent: `${k}_1`, inputs: {}, fields: {},
+      shadow: false, topLevel: false,
+    };
+  }
 });
+
+// Brick green-flag handler — covers the "file loaded directly into 1-4"
+// edge case where the backdrop-switch event never fires:
+//   when flag clicked
+//   if <backdrop name = "1-4_沙盒"> { show + go-to-front } else { hide }
+brickBlocks.gf_1 = {
+  opcode: 'event_whenflagclicked',
+  next: 'gf_2', parent: null, inputs: {}, fields: {},
+  shadow: false, topLevel: true, x: 500, y: 30,
+};
+brickBlocks.gf_2 = {
+  opcode: 'control_if_else',
+  next: null, parent: 'gf_1',
+  inputs: {
+    CONDITION: [2, 'gf_3'],
+    SUBSTACK: [2, 'gf_5'],
+    SUBSTACK2: [2, 'gf_7'],
+  },
+  fields: {}, shadow: false, topLevel: false,
+};
+brickBlocks.gf_3 = {
+  opcode: 'operator_equals',
+  next: null, parent: 'gf_2',
+  inputs: {
+    OPERAND1: [3, 'gf_4', [10, '']],
+    OPERAND2: [1, [10, '1-4_\u6c99\u76d2']], // 1-4_沙盒
+  },
+  fields: {}, shadow: false, topLevel: false,
+};
+brickBlocks.gf_4 = {
+  opcode: 'looks_backdropnumbername',
+  next: null, parent: 'gf_3', inputs: {},
+  fields: { NUMBER_NAME: ['name', null] },
+  shadow: false, topLevel: false,
+};
+brickBlocks.gf_5 = {
+  opcode: 'looks_show',
+  next: 'gf_6', parent: 'gf_2', inputs: {}, fields: {},
+  shadow: false, topLevel: false,
+};
+brickBlocks.gf_6 = {
+  opcode: 'looks_gotofrontback',
+  next: null, parent: 'gf_5', inputs: {},
+  fields: { FRONT_BACK: ['front', null] },
+  shadow: false, topLevel: false,
+};
+brickBlocks.gf_7 = {
+  opcode: 'looks_hide',
+  next: null, parent: 'gf_2', inputs: {}, fields: {},
+  shadow: false, topLevel: false,
+};
 
 // ---------- project.json ----------
 const project = {

@@ -168,8 +168,8 @@ const rng = (a, b) => Array.from({length: b - a + 1}, (_, i) => i + a);
 const SCENE_LAYOUTS = {
   '1-1': {
     bricks: [
-      ...rng(1, 9).map(r => [4, r]),
-      ...rng(1, 9).map(r => [10, r]),
+      ...rng(0, 11).map(r => [4, r]),
+      ...rng(0, 11).map(r => [10, r]),
     ],
     tank: { col: 7, row: 8 },
     eagle: { col: 7, row: 1 },
