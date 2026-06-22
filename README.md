@@ -7,12 +7,21 @@ Hacci × Wu 為朋友小孩設計的 Scratch 入門課程。透過重做經典 G
 
 ## 📥 一鍵入口（永遠是最新版 main）
 
-| | 連結 | 用途 |
-|---|---|---|
-| ▶️ | [線上玩 Lesson 1（TurboWarp）](https://turbowarp.org/?project_url=https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_BattleCity.sb3) | 不用下載，按一下就在瀏覽器玩 |
-| 📄 | [Lesson 1 PDF 教學（Google Docs Viewer）](https://docs.google.com/viewer?url=https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8.pdf) | 線上瀏覽，不用下載 |
-| 📦 | [Lesson 1 .sb3 直接下載](https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_BattleCity.sb3) | 想丟進 scratch.mit.edu 編輯器才用 |
-| 📑 | [Lesson 1 PDF 直接下載](https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8.pdf) | 想印給小朋友才用 |
+### Lesson 1 — 開坦克、吃老鷹
+| | 連結 |
+|---|---|
+| ▶️ | [TurboWarp 線上玩](https://turbowarp.org/?project_url=https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_BattleCity.sb3) |
+| 📄 | [PDF 線上看](https://docs.google.com/viewer?url=https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8.pdf) |
+| 📦 | [.sb3 直接下載](https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_BattleCity.sb3) |
+| 📑 | [PDF 直接下載](https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson1/Lesson1_%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8.pdf) |
+
+### Lesson 2 — 學會改積木
+| | 連結 |
+|---|---|
+| ▶️ | [TurboWarp 線上玩](https://turbowarp.org/?project_url=https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson2/Lesson2_BattleCity.sb3) |
+| 📄 | [PDF 線上看](https://docs.google.com/viewer?url=https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson2/Lesson2_%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8.pdf) |
+| 📦 | [.sb3 直接下載](https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson2/Lesson2_BattleCity.sb3) |
+| 📑 | [PDF 直接下載](https://raw.githubusercontent.com/blackie0424/scratch-battle-city-course/main/lesson2/Lesson2_%E6%96%B0%E6%89%8B%E6%95%99%E5%AD%B8.pdf) |
 
 > ⚠️ 上面 4 個連結需要 repo 是 **public**（私有的 repo TurboWarp / Google Viewer 都無法存取）。
 
